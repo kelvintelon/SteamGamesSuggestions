@@ -3,6 +3,7 @@ package com.steamgames.dao;
 import com.steamgames.model.CustomException;
 import com.steamgames.model.SteamGame;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
 import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.*;
 
 @Component
@@ -62,6 +64,23 @@ public class JdbcSteamGamesDao implements SteamGamesDao{
             batchCreateSteamGames(setOfSteamGamesFromFile);
         }
 
+    }
+
+    @Override
+    public List<SteamGame> getAllSteamGames() {
+        List<SteamGame> listOfGamesToReturn = new ArrayList<>();
+        String sql = "SELECT * FROM steam_game";
+        SqlRowSet result = jdbcTemplate.queryForRowSet(sql);
+        while (result.next()) {
+            try {
+                SteamGame steamGame = mapRowToSteamGame(result);
+                listOfGamesToReturn.add(steamGame);
+            } catch (SQLException e) {
+                throw new CustomException("Error retrieving all steam games");
+            }
+
+        }
+        return listOfGamesToReturn;
     }
 
     public void batchCreateSteamGames(final Collection<SteamGame> steamGames) {
@@ -184,5 +203,57 @@ public class JdbcSteamGamesDao implements SteamGamesDao{
         }
 
         return columnMap;
+    }
+
+    private SteamGame mapRowToSteamGame(SqlRowSet rs) throws SQLException {
+        SteamGame steamGame = new SteamGame();
+        steamGame.setGame_id(rs.getInt("game_id"));
+        steamGame.setName(rs.getString("name"));
+        steamGame.setRelease_date(rs.getString("release_date"));
+        steamGame.setRequired_age(rs.getInt("required_age"));
+        steamGame.setPrice(rs.getBigDecimal("price"));
+        steamGame.setAbout(rs.getString("about"));
+        steamGame.setImage_url(rs.getString("image_url"));
+        steamGame.setIs_for_windows(rs.getBoolean("is_for_windows"));
+        steamGame.setIs_for_mac(rs.getBoolean("is_for_mac"));
+        steamGame.setIs_for_linux(rs.getBoolean("is_for_linux"));
+
+        Object categoriesObject = rs.getObject("categories");
+
+        if(categoriesObject instanceof Array) {
+            Array tempArray = (Array) categoriesObject;
+            Object[] tempObjectArray = (Object[]) tempArray.getArray();
+            String[] categories = new String[tempObjectArray.length];
+            for (int i = 0; i < tempObjectArray.length; i++) {
+                categories[i] = tempObjectArray[i].toString();
+            }
+            steamGame.setCategories(categories);
+        }
+
+        Object genresObject = rs.getObject("genres");
+
+        if(genresObject instanceof Array) {
+            Array tempArray = (Array) genresObject;
+            Object[] tempObjectArray = (Object[]) tempArray.getArray();
+            String[] genres = new String[tempObjectArray.length];
+            for (int i = 0; i < tempObjectArray.length; i++) {
+                genres[i] = tempObjectArray[i].toString();
+            }
+            steamGame.setGenres(genres);
+        }
+
+        Object tagsObject = rs.getObject("tags");
+
+        if(tagsObject instanceof Array) {
+            Array tempArray = (Array) tagsObject;
+            Object[] tempObjectArray = (Object[]) tempArray.getArray();
+            String[] tags = new String[tempObjectArray.length];
+            for (int i = 0; i < tempObjectArray.length; i++) {
+                tags[i] = tempObjectArray[i].toString();
+            }
+            steamGame.setGenres(tags);
+        }
+
+        return steamGame;
     }
 }
