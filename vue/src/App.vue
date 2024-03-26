@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <nav>
-      <router-link to="/">Home</router-link>  
+      <router-link to="/">Home</router-link> | 
+      <a href="https://github.com/kelvintelon/SteamGamesSuggestions" target="_blank">Source Code</a>
     </nav>
     <router-view/>
   </div>
@@ -9,7 +10,7 @@
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: system-ui;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -21,11 +22,14 @@ nav {
 }
 
 nav a {
-  font-weight: bold;
-  color: #2c3e50;
+  color: #ffffff;
 }
 
-nav a.router-link-exact-active {
-  color: #2414d2;
+body {
+  background-image: url('assets/arcadeRoom.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 </style>

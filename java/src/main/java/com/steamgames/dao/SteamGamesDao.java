@@ -10,4 +10,10 @@ public interface SteamGamesDao {
     void uploadSteamGamesCsv(MultipartFile multipartFile);
 
     List<SteamGame> getAllSteamGames();
+
+    List<SteamGame> recommendSteamGames();
+
+    List<SteamGame> getListOfGamesByName(String name);
+
+    SteamGame getGameByName(String name);
 }

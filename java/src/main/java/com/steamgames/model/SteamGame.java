@@ -14,9 +14,13 @@ public class SteamGame {
     private Boolean is_for_windows;
     private Boolean is_for_mac;
     private Boolean is_for_linux;
+    private String[] developers;
+    private String[] publishers;
     private String[] categories;
     private String[] genres;
     private String[] tags;
+
+    private double similarity_score;
 
     public SteamGame(int game_id, String name, String release_date, int required_age, BigDecimal price, String about, String image_url, Boolean is_for_windows, Boolean is_for_mac, Boolean is_for_linux, String[] categories, String[] genres, String[] tags) {
         this.game_id = game_id;
@@ -36,6 +40,30 @@ public class SteamGame {
 
     public SteamGame() {
 
+    }
+
+    public double getSimilarity_score() {
+        return similarity_score;
+    }
+
+    public void setSimilarity_score(double similarity_score) {
+        this.similarity_score = similarity_score;
+    }
+
+    public String[] getDevelopers() {
+        return developers;
+    }
+
+    public void setDevelopers(String[] developers) {
+        this.developers = developers;
+    }
+
+    public String[] getPublishers() {
+        return publishers;
+    }
+
+    public void setPublishers(String[] publishers) {
+        this.publishers = publishers;
     }
 
     public int getGame_id() {
