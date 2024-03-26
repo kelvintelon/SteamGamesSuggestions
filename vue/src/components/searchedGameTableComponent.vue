@@ -2,7 +2,7 @@
     <v-data-table :headers="headers" :items="$store.state.searchedGames" class="dataTable" :single-expand="false"
         :expanded.sync="expanded" @click:row="(item, slot) => slot.expand(!slot.isExpanded)" dense>
         <template v-slot:top>
-            <v-toolbar flat>
+            <v-toolbar flat class="dataTable">
                 <v-toolbar-title class="tableTitle">Click on row to see description</v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-toolbar-title class="descriptionTitle">Select a game to find suggestions</v-toolbar-title>
@@ -41,9 +41,9 @@ export default {
                     align: 'start',
                     sortable: false,
                     value: 'game_id',
-                },
-                { text: 'Name', value: 'name', sortable: false, },
+                },                
                 { text: '', value: 'image_url', sortable: false },
+                { text: 'Name', value: 'name', sortable: false, },
                 { text: "Select Game", value: "actions", sortable: false },
 
                 // { text: 'Price', value: 'price', sortable: false },
@@ -93,6 +93,6 @@ export default {
     font-weight: bold;
 }
 .dataTable {
-    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
 }
 </style>

@@ -152,7 +152,10 @@ public class JdbcSteamGamesDao implements SteamGamesDao{
                 throw new CustomException("Error retrieving steam game");
             }
         }
-        return listOfGamesToReturn.isEmpty() ? null : listOfGamesToReturn;
+        if (listOfGamesToReturn.isEmpty()) {
+            throw new CustomException("Game not found, adjust search");
+        }
+        return listOfGamesToReturn;
     }
 
     public double calculateCosineSimilarity(SteamGame game1, SteamGame game2) {
