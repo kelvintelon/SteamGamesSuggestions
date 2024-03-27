@@ -9,5 +9,8 @@ export default {
     findSteamGame(name) {
         return http.get(`/findSteamGame/${name}`)
     },
-
+    getSuggestions(game_id) {
+        return http.get(`/getSuggestions/${game_id}`)
+    },
+    
 }

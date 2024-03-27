@@ -11,9 +11,13 @@ public interface SteamGamesDao {
 
     List<SteamGame> getAllSteamGames();
 
-    List<SteamGame> recommendSteamGames();
+    List<SteamGame> recommendSteamGamesTest();
+
+    List<SteamGame> recommendSteamGamesByGameID(int game_id);
 
     List<SteamGame> getListOfGamesByName(String name);
 
     SteamGame getGameByName(String name);
+
+    SteamGame getGameByGameID(int game_id);
 }

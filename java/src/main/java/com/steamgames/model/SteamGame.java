@@ -19,7 +19,6 @@ public class SteamGame {
     private String[] categories;
     private String[] genres;
     private String[] tags;
-
     private double similarity_score;
 
     public SteamGame(int game_id, String name, String release_date, int required_age, BigDecimal price, String about, String image_url, Boolean is_for_windows, Boolean is_for_mac, Boolean is_for_linux, String[] categories, String[] genres, String[] tags) {

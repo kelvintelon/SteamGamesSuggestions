@@ -26,9 +26,13 @@ public class SteamGameController {
         return steamGamesDao.getListOfGamesByName(name);
     }
 
+    @GetMapping("/getSuggestions/{game_id}")
+    public List<SteamGame> getListOfInitialRecommendations(@PathVariable int game_id) {
+        return steamGamesDao.recommendSteamGamesByGameID(game_id);
+    }
 
     @GetMapping("/test")
     public List<SteamGame> test () {
-        return steamGamesDao.recommendSteamGames();
+        return steamGamesDao.recommendSteamGamesTest();
     }
 }
