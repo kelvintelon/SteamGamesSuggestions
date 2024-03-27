@@ -12,12 +12,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 @Component
@@ -178,33 +180,6 @@ public class JdbcSteamGamesDao implements SteamGamesDao {
     }
 
     @Override
-    public List<SteamGame> recommendSteamGamesTest() {
-        List<Pair<SteamGame, Double>> similarityScores = new ArrayList<>();
-
-        List<SteamGame> gameList = getAllSteamGames();
-
-        SteamGame targetGame = getGameByName("Rainbow Six Siege");
-
-        for (SteamGame game : gameList) {
-            if (!targetGame.getRelease_date().equalsIgnoreCase(game.getRelease_date())) {
-                double similarity = calculateCosineSimilarityDefaultAttributes(targetGame, game);
-                game.setSimilarity_score(similarity);
-                similarityScores.add(Pair.of(game, similarity));
-            }
-        }
-
-        similarityScores.sort((p1, p2) -> Double.compare(p2.getRight(), p1.getRight())); // Sort by similarity
-
-        List<SteamGame> recommendedGames = new ArrayList<>();
-        for (Pair<SteamGame, Double> pair : similarityScores.subList(1, Math.min(21, similarityScores.size()))) {
-            SteamGame recommendedGame = pair.getLeft();
-            recommendedGames.add(recommendedGame);
-        }
-
-        return recommendedGames;
-    }
-
-    @Override
     public List<SteamGame> recommendSteamGamesByGameID(int game_id) {
         List<Pair<SteamGame, Double>> similarityScores = new ArrayList<>();
 
@@ -214,7 +189,8 @@ public class JdbcSteamGamesDao implements SteamGamesDao {
 
         for (SteamGame game : gameList) {
             if (!targetGame.getRelease_date().equalsIgnoreCase(game.getRelease_date())) {
-                double similarity = calculateCosineSimilarityDefaultAttributes(targetGame, game);
+                double similarity = calculateCosineSimilarityOptimalAttributes(targetGame, game);
+
                 game.setSimilarity_score(similarity);
                 similarityScores.add(Pair.of(game, similarity));
             }
@@ -223,7 +199,7 @@ public class JdbcSteamGamesDao implements SteamGamesDao {
         similarityScores.sort((p1, p2) -> Double.compare(p2.getRight(), p1.getRight())); // Sort by similarity
 
         List<SteamGame> recommendedGames = new ArrayList<>();
-        for (Pair<SteamGame, Double> pair : similarityScores.subList(1, Math.min(21, similarityScores.size()))) {
+        for (Pair<SteamGame, Double> pair : similarityScores.subList(0, Math.min(20, similarityScores.size()))) {
             SteamGame recommendedGame = pair.getLeft();
             recommendedGames.add(recommendedGame);
         }
@@ -231,37 +207,42 @@ public class JdbcSteamGamesDao implements SteamGamesDao {
         return recommendedGames;
     }
 
-    public double calculateCosineSimilarityDefaultAttributes(SteamGame game1, SteamGame game2) {
+    @Override
+    public List<SteamGame> applyAttributesAndSuggest(int game_id, String[] filters) {
+
+        List<Pair<SteamGame, Double>> similarityScores = new ArrayList<>();
+
+        List<SteamGame> gameList = getAllSteamGames();
+
+        SteamGame targetGame = getGameByGameID(game_id);
+
+        for (SteamGame game : gameList) {
+            if (!targetGame.getRelease_date().equalsIgnoreCase(game.getRelease_date())) {
+                double similarity = calculateCosineSimilarityRequestedAttributes(filters, game);
+
+                game.setSimilarity_score(similarity);
+                similarityScores.add(Pair.of(game, similarity));
+
+            }
+        }
+
+        similarityScores.sort((p1, p2) -> Double.compare(p2.getRight(), p1.getRight())); // Sort by similarity
+
+        List<SteamGame> recommendedGames = new ArrayList<>();
+        for (Pair<SteamGame, Double> pair : similarityScores.subList(0, Math.min(20, similarityScores.size()))) {
+            SteamGame recommendedGame = pair.getLeft();
+            recommendedGames.add(recommendedGame);
+        }
+
+        return recommendedGames;
+    }
+
+
+    public double calculateCosineSimilarityOptimalAttributes(SteamGame game1, SteamGame game2) {
         // Combine all relevant attributes into a single map for similarity calculation
         Map<CharSequence, Integer> attributes1 = new HashMap<>();
 
         addAttributesToMap(attributes1, new String[]{game1.getName()});
-
-//        addAttributesToMap(attributes1, new String[]{game1.getAbout()});
-
-        // release year
-//        addAttributesToMap(attributes1, new String[]{game1.getRelease_date().substring(game1.getRelease_date().length()-5,game1.getRelease_date().length()-1)});
-
-//        addAttributesToMap(attributes1, new String[]{String.valueOf(game1.getRequired_age())});
-
-//        addAttributesToMap(attributes1, new String[]{game1.getPrice().toString()});
-
-//        if (game1.getIs_for_windows()) {
-//            addAttributesToMap(attributes1, new String[]{"Windows"});
-//        }
-//
-//        if (game1.getIs_for_linux()) {
-//            addAttributesToMap(attributes1, new String[]{"Linux"});
-//        }
-//
-//        if (game1.getIs_for_mac()) {
-//            addAttributesToMap(attributes1, new String[]{"Mac"});
-//        }
-//
-//        if (game1.getDevelopers() != null) {
-//            addAttributesToMap(attributes1, game1.getDevelopers());
-//
-//        }
 
         if (game1.getPublishers() != null) {
             addAttributesToMap(attributes1, game1.getPublishers());
@@ -283,35 +264,34 @@ public class JdbcSteamGamesDao implements SteamGamesDao {
 
         addAttributesToMap(attributes2, new String[]{game2.getName()});
 
-//        addAttributesToMap(attributes2, new String[]{game2.getAbout()});
+        addAttributesToMap(attributes2, new String[]{game2.getAbout()});
 
-        // release year
-//        addAttributesToMap(attributes2, new String[]{game2.getRelease_date().substring(game2.getRelease_date().length()-5,game2.getRelease_date().length()-1)});
+//         release year
+        addAttributesToMap(attributes2, new String[]{game2.getRelease_date().substring(game2.getRelease_date().length()-5,game2.getRelease_date().length()-1)});
 
-//        addAttributesToMap(attributes2, new String[]{String.valueOf(game2.getRequired_age())});
+        addAttributesToMap(attributes2, new String[]{String.valueOf(game2.getRequired_age())});
 
-//        addAttributesToMap(attributes2, new String[]{game2.getPrice().toString()});
+        addAttributesToMap(attributes2, new String[]{game2.getPrice().toString()});
 
-//        if (game2.getIs_for_windows()) {
-//            addAttributesToMap(attributes2, new String[]{"Windows"});
-//        }
-//
-//        if (game2.getIs_for_linux()) {
-//            addAttributesToMap(attributes2, new String[]{"Linux"});
-//        }
-//
-//        if (game2.getIs_for_mac()) {
-//            addAttributesToMap(attributes2, new String[]{"Mac"});
-//        }
+        if (game2.getIs_for_windows()) {
+            addAttributesToMap(attributes2, new String[]{"Windows"});
+        }
 
-//        if (game2.getDevelopers() != null) {
-//            addAttributesToMap(attributes2, game2.getDevelopers());
-//
-//        }
-//
-//        if (game2.getPublishers() != null) {
-//            addAttributesToMap(attributes2, game2.getPublishers());
-//        }
+        if (game2.getIs_for_linux()) {
+            addAttributesToMap(attributes2, new String[]{"Linux"});
+        }
+
+        if (game2.getIs_for_mac()) {
+            addAttributesToMap(attributes2, new String[]{"Mac"});
+        }
+
+        if (game2.getDevelopers() != null) {
+            addAttributesToMap(attributes2, game2.getDevelopers());
+        }
+
+        if (game2.getPublishers() != null) {
+            addAttributesToMap(attributes2, game2.getPublishers());
+        }
 
         if (game2.getGenres() != null) {
             addAttributesToMap(attributes2, game2.getGenres());
@@ -331,10 +311,97 @@ public class JdbcSteamGamesDao implements SteamGamesDao {
         return similarityScore;
     }
 
+    public double calculateCosineSimilarityRequestedAttributes(String[] requestedAttributes, SteamGame game2) {
+        // Combine all relevant attributes into a single map for similarity calculation
+        Map<CharSequence, Integer> attributes1 = new HashMap<>();
+
+        addAttributesToMap(attributes1, requestedAttributes);
+
+
+        Map<CharSequence, Integer> attributes2 = new HashMap<>();
+
+        addAttributesToMap(attributes2, new String[]{game2.getName()});
+
+        addAttributesToMap(attributes2, new String[]{game2.getAbout()});
+
+        //release year
+        addAttributesToMap(attributes2, new String[]{game2.getRelease_date().substring(game2.getRelease_date().length()-5,game2.getRelease_date().length()-1)});
+
+        addAttributesToMap(attributes2, new String[]{String.valueOf(game2.getRequired_age())});
+
+        addAttributesToMap(attributes2, new String[]{game2.getPrice().toString()});
+
+        if (game2.getIs_for_windows()) {
+            addAttributesToMap(attributes2, new String[]{"Windows"});
+        }
+
+        if (game2.getIs_for_linux()) {
+            addAttributesToMap(attributes2, new String[]{"Linux"});
+        }
+
+        if (game2.getIs_for_mac()) {
+            addAttributesToMap(attributes2, new String[]{"Mac"});
+        }
+
+        if (game2.getDevelopers() != null) {
+            addAttributesToMap(attributes2, game2.getDevelopers());
+
+        }
+
+        if (game2.getPublishers() != null) {
+            addAttributesToMap(attributes2, game2.getPublishers());
+        }
+
+        if (game2.getGenres() != null) {
+            addAttributesToMap(attributes2, game2.getGenres());
+        }
+
+        if (game2.getCategories() != null) {
+            addAttributesToMap(attributes2, game2.getCategories());
+        }
+
+        if (game2.getTags() != null) {
+            addAttributesToMap(attributes2, game2.getTags());
+        }
+
+        // Calculate cosine similarity using Apache Commons Text library
+        CosineSimilarity cosineSimilarity = new CosineSimilarity();
+        Double similarityScore = cosineSimilarity.cosineSimilarity(attributes1, attributes2);
+        return similarityScore;
+    }
+
+
     private void addAttributesToMap(Map<CharSequence, Integer> map, String[] attributes) {
         for (String attribute : attributes) {
             map.merge(attribute, 1, Integer::sum);
         }
+    }
+
+    @Override
+    public List<SteamGame> recommendSteamGamesTest() {
+        List<Pair<SteamGame, Double>> similarityScores = new ArrayList<>();
+
+        List<SteamGame> gameList = getAllSteamGames();
+
+        SteamGame targetGame = getGameByName("Rainbow Six Siege");
+
+        for (SteamGame game : gameList) {
+            if (!targetGame.getRelease_date().equalsIgnoreCase(game.getRelease_date())) {
+                double similarity = calculateCosineSimilarityOptimalAttributes(targetGame, game);
+                game.setSimilarity_score(similarity);
+                similarityScores.add(Pair.of(game, similarity));
+            }
+        }
+
+        similarityScores.sort((p1, p2) -> Double.compare(p2.getRight(), p1.getRight())); // Sort by similarity
+
+        List<SteamGame> recommendedGames = new ArrayList<>();
+        for (Pair<SteamGame, Double> pair : similarityScores.subList(0, Math.min(20, similarityScores.size()))) {
+            SteamGame recommendedGame = pair.getLeft();
+            recommendedGames.add(recommendedGame);
+        }
+
+        return recommendedGames;
     }
 
     public void batchCreateSteamGames(final Collection<SteamGame> steamGames) {

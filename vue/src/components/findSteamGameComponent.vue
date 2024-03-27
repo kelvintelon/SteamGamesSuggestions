@@ -16,7 +16,7 @@
             </v-card-text>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="resetField">
+                <v-btn color="red darken-1" text @click="resetField">
                     Reset
                 </v-btn>
                 <v-btn style="color: rgba(0, 42, 253, 1)" text @click="searchSteamGame">

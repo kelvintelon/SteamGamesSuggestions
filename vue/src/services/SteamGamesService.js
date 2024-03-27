@@ -12,5 +12,7 @@ export default {
     getSuggestions(game_id) {
         return http.get(`/getSuggestions/${game_id}`)
     },
-    
+    applyFilters(applyFilteredObject) {
+        return http.post('/applyAttributes', applyFilteredObject)
+    },
 }

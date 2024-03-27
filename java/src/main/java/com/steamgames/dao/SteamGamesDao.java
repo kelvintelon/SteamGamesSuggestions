@@ -20,4 +20,6 @@ public interface SteamGamesDao {
     SteamGame getGameByName(String name);
 
     SteamGame getGameByGameID(int game_id);
+
+    List<SteamGame> applyAttributesAndSuggest(int game_id, String[] filters);
 }

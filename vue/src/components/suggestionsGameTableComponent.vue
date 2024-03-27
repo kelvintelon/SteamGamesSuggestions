@@ -3,7 +3,10 @@
         :single-expand="singleExpand" :expanded.sync="expanded" show-expand item-key="game_id" dense>
         <template v-slot:top>
             <v-toolbar flat class="dataTable">
-                <v-toolbar-title class="tableTitle">Suggestions Ordered By Cosine Similarity Score</v-toolbar-title>
+                <v-toolbar-title class="tableTitle">Cosine Similarity Suggestions for:
+                    "{{ $store.state.chosenGameForSuggestion.name }}"</v-toolbar-title>
+                <v-spacer></v-spacer>
+                <filter-component></filter-component>
             </v-toolbar>
         </template>
         <template v-slot:[`item.image_url`]="{ item }">
@@ -42,10 +45,11 @@
 
 <script>
 import SteamGamesService from '@/services/SteamGamesService';
+import filterComponent from './filterComponent.vue';
 
 export default {
     name: "suggestions-game-table-component",
-    components: {},
+    components: { filterComponent },
     data() {
         return {
             expanded: [],
@@ -62,7 +66,7 @@ export default {
                 // { text: 'Categories', value: 'categories', sortable: false },
                 // { text: 'Genres', value: 'genres', sortable: false },
                 // { text: 'Tags', value: 'tags', sortable: false },
-                { text: "Similarity Score", value: "similarity_score", sortable: false },
+                { text: "Similarity Score (0 to 1)", value: "similarity_score", sortable: false },
 
             ],
 
@@ -95,7 +99,7 @@ export default {
 
 <style scoped>
 .tableTitle {
-    color: rgba(255, 24, 24, 0.9);
+    color: blueviolet;
     text-decoration: underline;
     font-weight: bold;
 }
