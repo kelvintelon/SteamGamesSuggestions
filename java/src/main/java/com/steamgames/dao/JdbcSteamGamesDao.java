@@ -199,7 +199,7 @@ public class JdbcSteamGamesDao implements SteamGamesDao {
         similarityScores.sort((p1, p2) -> Double.compare(p2.getRight(), p1.getRight())); // Sort by similarity
 
         List<SteamGame> recommendedGames = new ArrayList<>();
-        for (Pair<SteamGame, Double> pair : similarityScores.subList(0, Math.min(20, similarityScores.size()))) {
+        for (Pair<SteamGame, Double> pair : similarityScores.subList(0, Math.min(10, similarityScores.size()))) {
             SteamGame recommendedGame = pair.getLeft();
             recommendedGames.add(recommendedGame);
         }
@@ -229,7 +229,7 @@ public class JdbcSteamGamesDao implements SteamGamesDao {
         similarityScores.sort((p1, p2) -> Double.compare(p2.getRight(), p1.getRight())); // Sort by similarity
 
         List<SteamGame> recommendedGames = new ArrayList<>();
-        for (Pair<SteamGame, Double> pair : similarityScores.subList(0, Math.min(20, similarityScores.size()))) {
+        for (Pair<SteamGame, Double> pair : similarityScores.subList(0, Math.min(10, similarityScores.size()))) {
             SteamGame recommendedGame = pair.getLeft();
             recommendedGames.add(recommendedGame);
         }
@@ -396,7 +396,7 @@ public class JdbcSteamGamesDao implements SteamGamesDao {
         similarityScores.sort((p1, p2) -> Double.compare(p2.getRight(), p1.getRight())); // Sort by similarity
 
         List<SteamGame> recommendedGames = new ArrayList<>();
-        for (Pair<SteamGame, Double> pair : similarityScores.subList(0, Math.min(20, similarityScores.size()))) {
+        for (Pair<SteamGame, Double> pair : similarityScores.subList(0, Math.min(10, similarityScores.size()))) {
             SteamGame recommendedGame = pair.getLeft();
             recommendedGames.add(recommendedGame);
         }

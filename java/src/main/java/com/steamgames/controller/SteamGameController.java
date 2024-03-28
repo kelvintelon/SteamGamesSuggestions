@@ -42,8 +42,9 @@ public class SteamGameController {
         String[] newAttributes = applyFilteredObject.getFilteredStrings();
         int game_id = applyFilteredObject.getGame_id();
         List<SteamGame> newGameSuggestions = steamGamesDao.applyAttributesAndSuggest(game_id, newAttributes);
+        List<SteamGame> optimalGameSuggestions = steamGamesDao.recommendSteamGamesByGameID(game_id);
         HttpHeaders httpHeaders = new HttpHeaders();
-        return new ResponseEntity<>(new SuggestionResponse(newGameSuggestions), httpHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(new SuggestionResponse(newGameSuggestions, optimalGameSuggestions), httpHeaders, HttpStatus.CREATED);
     }
 
     @GetMapping("/test")
@@ -55,8 +56,20 @@ public class SteamGameController {
 
         private List<SteamGame> newGameSuggestions = new ArrayList<>();
 
-        public SuggestionResponse(List<SteamGame> newGameSuggestions) {
+        private List<SteamGame> optimalGameSuggestions = new ArrayList<>();
+
+        public SuggestionResponse(List<SteamGame> newGameSuggestions, List<SteamGame> optimalGameSuggestions) {
             this.newGameSuggestions = newGameSuggestions;
+            this.optimalGameSuggestions = optimalGameSuggestions;
+        }
+
+        @JsonProperty("optimalGameSuggestions")
+        public List<SteamGame> getOptimalGameSuggestions() {
+            return optimalGameSuggestions;
+        }
+
+        public void setOptimalGameSuggestions(List<SteamGame> optimalGameSuggestions) {
+            this.optimalGameSuggestions = optimalGameSuggestions;
         }
 
         @JsonProperty("newGameSuggestions")

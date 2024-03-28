@@ -17,6 +17,13 @@
       </v-col>
       <v-spacer></v-spacer>
     </v-row>
+    <v-row justify="center" class="gameTable">
+      <v-spacer></v-spacer>
+      <v-col justify="center" lg="11" >
+        <radar-component></radar-component>
+      </v-col>
+      <v-spacer></v-spacer>
+    </v-row>
   </div>
 </template>
 
@@ -25,8 +32,9 @@ import FindSteamGameComponent from './findSteamGameComponent.vue';
 import searchedGameTableComponent from './searchedGameTableComponent.vue';
 import suggestionsGameTableComponent from './suggestionsGameTableComponent.vue';
 import uploadGamesComponent from './uploadGamesComponent.vue'
+import radarComponent from './radarComponent.vue';
 export default {
-  components: { uploadGamesComponent, FindSteamGameComponent, searchedGameTableComponent,suggestionsGameTableComponent },
+  components: { uploadGamesComponent, FindSteamGameComponent, searchedGameTableComponent,suggestionsGameTableComponent, radarComponent },
   name: 'Home-Component',
   props: {
     msg: String

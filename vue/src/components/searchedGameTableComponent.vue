@@ -95,6 +95,7 @@ export default {
                         this.overlay = false;
                         this.$store.commit("SET_CHOSEN_GAME", game)
                         this.$store.commit("SET_GAME_SUGGESTIONS", response.data);
+                        this.$store.commit("SET_OPTIMAL_GAME_SUGGESTIONS", response.data);
                     }
                 })
                 .catch((error) => {

@@ -8,6 +8,7 @@ export default new Vuex.Store({
     searchedGames: [],
     chosenGameForSuggestion: {},
     gameSuggestions: [],
+    optimalGameSuggestions: [],
   },
   getters: {
   },
@@ -21,6 +22,9 @@ export default new Vuex.Store({
     SET_GAME_SUGGESTIONS(state, returnGameList) {
       state.gameSuggestions = returnGameList;
     },
+    SET_OPTIMAL_GAME_SUGGESTIONS(state, returnGameList) {
+      state.optimalGameSuggestions = returnGameList;
+    }
   },
   actions: {
   },

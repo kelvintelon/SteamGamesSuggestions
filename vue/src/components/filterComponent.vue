@@ -195,6 +195,7 @@ export default {
                     .then((response) => {
                         if (response.status == 201) {
                             this.$store.commit("SET_GAME_SUGGESTIONS", response.data.newGameSuggestions)
+                            this.$store.commit("SET_OPTIMAL_GAME_SUGGESTIONS", response.data.optimalGameSuggestions)
                             this.loading = false;
                             this.dialog = false;
                         }
