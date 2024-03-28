@@ -441,20 +441,20 @@ public class JdbcSteamGamesDao implements SteamGamesDao {
             String thisLine = String.valueOf(listOfStringsFromBufferedReader.get(i));
             String[] splitLine = thisLine.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
 
-            int game_id = Integer.parseInt(splitLine[columnMap.get("AppID")]);
+            int game_id = Integer.parseInt(splitLine[columnMap.get("AppID")].trim().replaceAll("^\"|\"$", ""));
             String name = splitLine[columnMap.get("Name")].trim().replaceAll("^\"|\"$", "");
-            ;
+
             String release_date = splitLine[columnMap.get("Release date")].trim().replaceAll("^\"|\"$", "");
-            ;
+
             int required_age = 0;
             try {
-                required_age = Integer.parseInt(splitLine[columnMap.get("Required age")]);
+                required_age = Integer.parseInt(splitLine[columnMap.get("Required age")].trim().replaceAll("^\"|\"$", ""));
             } catch (NumberFormatException e) {
                 System.out.println("Required Age Error at Game ID: " + game_id);
             }
             BigDecimal price = null;
             try {
-                price = new BigDecimal(splitLine[columnMap.get("Price")]);
+                price = new BigDecimal(splitLine[columnMap.get("Price")].trim().replaceAll("^\"|\"$", ""));
             } catch (Exception e) {
                 System.out.println("Price Error at Game ID: " + game_id);
             }
