@@ -12,15 +12,30 @@
     </v-row>
     <v-row justify="center" class="gameTable">
       <v-spacer></v-spacer>
-      <v-col justify="center" lg="11" >
+      <v-col justify="center" lg="11">
         <suggestions-game-table-component></suggestions-game-table-component>
       </v-col>
       <v-spacer></v-spacer>
     </v-row>
     <v-row justify="center" class="gameTable">
       <v-spacer></v-spacer>
-      <v-col justify="center" lg="11" >
-        <radar-component></radar-component>
+      <v-col justify="center" lg="11">
+        <v-card>
+          <v-card-title>Radar Chart</v-card-title>
+          <radar-component></radar-component>
+          <v-card-title>Similarity scores from 0 to 1</v-card-title>
+        </v-card>
+      </v-col>
+      <v-spacer></v-spacer>
+    </v-row>
+    <v-row justify="center" class="gameTable">
+      <v-spacer></v-spacer>
+      <v-col justify="center" lg="11">
+        <v-card class="barChart">
+          <v-card-title>Bar Chart</v-card-title>
+          <bar-component></bar-component>
+          <v-card-title style="background-color: white;">Similarity scores from 0 to 1</v-card-title>
+        </v-card>
       </v-col>
       <v-spacer></v-spacer>
     </v-row>
@@ -33,8 +48,9 @@ import searchedGameTableComponent from './searchedGameTableComponent.vue';
 import suggestionsGameTableComponent from './suggestionsGameTableComponent.vue';
 import uploadGamesComponent from './uploadGamesComponent.vue'
 import radarComponent from './radarComponent.vue';
+import barComponent from './barComponent.vue';
 export default {
-  components: { uploadGamesComponent, FindSteamGameComponent, searchedGameTableComponent,suggestionsGameTableComponent, radarComponent },
+  components: { uploadGamesComponent, FindSteamGameComponent, searchedGameTableComponent, suggestionsGameTableComponent, radarComponent, barComponent},
   name: 'Home-Component',
   props: {
     msg: String
@@ -76,7 +92,12 @@ li {
   margin-top: 50px;
   margin-bottom: 50px;
 }
+
 .gameTable {
   margin-top: 90px;
+}
+
+.barChart {
+  height: 600px;
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <v-card >
+    <v-card>
         <Radar :data="computeData" :options="options" style="radarStyle"    />
     </v-card>
 </template>
@@ -47,7 +47,6 @@ export default {
             let firstDataSetObject = {};
             let secondDataSetObject = {};
 
-            // Combine the two arrays into one using the spread operator
             let gameSuggestions = this.$store.state.gameSuggestions;
             let optimalGameSuggestions = this.$store.state.optimalGameSuggestions;
 
@@ -81,7 +80,7 @@ export default {
                 });
 
                 firstDataSetObject = {
-                    label: 'Optimal Suggestions',
+                    label: 'Optimal Attributes Suggestions',
                     backgroundColor: 'rgba(255,99,132,0.2)',
                     borderColor: 'rgba(255,99,132,1)',
                     pointBackgroundColor: 'rgba(255,99,132,1)',
@@ -92,7 +91,7 @@ export default {
                 }
 
                 secondDataSetObject = {
-                    label: 'User Chosen Attributes',
+                    label: 'User Requested Attributes',
                     backgroundColor: 'rgba(179,181,198,0.2)',
                     borderColor: 'rgba(179,181,198,1)',
                     pointBackgroundColor: 'rgba(179,181,198,1)',
